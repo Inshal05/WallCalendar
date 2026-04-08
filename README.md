@@ -1,29 +1,208 @@
 # Wall Calendar
 
-React + Vite app for the wall calendar project.
+Wall Calendar is a React + Vite monthly planner designed to feel like a printable wall calendar while still being interactive in the browser. It lets you browse months, select date ranges, save notes, track personal reminders, highlight India holidays, and export the current view for printing or PDF use.
 
-## Scripts
+Live site: [https://calendarforwall.web.app/](https://calendarforwall.web.app/)
 
-- `npm run dev` starts the local Vite dev server.
-- `npm run build` creates the production build in `dist/`.
-- `npm run preview` serves the production build locally.
-- `npm run holidays:sync` refreshes the holiday dataset.
-- `npm run firebase:login` opens Firebase CLI login.
-- `npm run firebase:deploy` deploys Firebase Hosting.
+## Overview
 
-## Firebase Hosting
+This project is a frontend-only planner with no backend or user accounts. Everything a user adds, such as notes and reminders, is stored locally in the browser. That makes the app fast and simple to use, while also making it easy to deploy as a static site.
 
-This repo is configured for Firebase Hosting as a single-page app:
+The app is built around a month grid and supports:
 
-- Production files are deployed from `dist/`
-- All routes rewrite to `index.html`
+- month-by-month navigation
+- day and date-range selection
+- notes for a month, a single day, or a selected range
+- personal reminders with optional yearly recurrence
+- India holiday highlights from a pre-generated dataset
+- theme switching with `auto`, `light`, and `dark` modes
+- a print-friendly layout for physical printing or saving as PDF
+- a saved-items modal for reviewing, editing, and deleting stored entries
 
-### First-time setup
+## Main Features
 
-1. Run `npm run build`
-2. Run `npx firebase-tools login`
-3. Run `npx firebase-tools use --add`
-4. Choose or create your Firebase project
-5. Run `npm run firebase:deploy`
+### 1. Interactive calendar navigation
 
-If you want to save the selected Firebase project in the repo, create a `.firebaserc` file after linking the project. It is currently ignored so local project IDs do not get committed by accident.
+Users can move between months, jump back to today, or change the displayed month and year from the header controls.
+
+### 2. Date-range planning
+
+The calendar supports selecting a start date and an end date directly from the grid. This makes it useful for trip planning, leave planning, event windows, or any multi-day schedule.
+
+### 3. Notes with multiple scopes
+
+Notes can be saved in three different ways:
+
+- `Month` notes for broad planning
+- `Day` notes for a specific date
+- `Range` notes for a span of dates
+
+Pinned notes are sorted to the top so important items stay visible.
+
+### 4. Personal reminders
+
+Users can create reminders for categories such as:
+
+- birthdays
+- anniversaries
+- meetings
+- personal tasks
+
+Reminders can optionally repeat every year, which is especially useful for recurring occasions.
+
+### 5. India holiday highlighting
+
+The calendar includes a holiday dataset for India and shows those holidays directly on relevant dates. This helps combine personal planning with public holiday awareness in one place.
+
+### 6. Browser-local persistence
+
+Notes, reminders, view state, theme mode, and UI preferences are saved with `localStorage`. If the browser data is cleared, the saved planner data is removed as well.
+
+### 7. Print and PDF support
+
+The current month can be printed through the browser print dialog. This makes the app useful both as a digital planner and as a printable wall-calendar sheet.
+
+## Tech Stack
+
+- `React 19` for the UI
+- `Vite` for development and production builds
+- `lucide-react` for icons
+- `Firebase Hosting` for deployment
+- `localStorage` for client-side persistence
+- a custom Node script for holiday data generation
+
+## Project Structure
+
+```text
+wall-calendar/
+|-- public/
+|   |-- favicon.svg
+|   `-- icons.svg
+|-- scripts/
+|   `-- syncIndiaHolidayData.mjs
+|-- src/
+|   |-- assets/
+|   |-- components/
+|   |   |-- CalendarGrid.jsx
+|   |   `-- NotesPanel.jsx
+|   |-- data/
+|   |   |-- featuredPhotoData.js
+|   |   `-- holidayData.js
+|   |-- utils/
+|   |   `-- calendarUtils.js
+|   |-- App.jsx
+|   |-- index.css
+|   `-- main.jsx
+|-- .firebaserc
+|-- firebase.json
+|-- package.json
+`-- vite.config.js
+```
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have a recent version of Node.js and npm installed.
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Start the development server
+
+```bash
+npm run dev
+```
+
+Then open the local URL shown by Vite, usually `http://localhost:5173`.
+
+### Build for production
+
+```bash
+npm run build
+```
+
+### Preview the production build
+
+```bash
+npm run preview
+```
+
+## Available Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Create a production build in `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run holidays:sync` | Refresh the generated India holiday dataset |
+| `npm run firebase:login` | Sign in with the Firebase CLI |
+| `npm run firebase:deploy` | Deploy the built app to Firebase Hosting |
+
+## Holiday Data Workflow
+
+Holiday data is stored in `src/data/holidayData.js`.
+
+It is generated by the script:
+
+```bash
+npm run holidays:sync
+```
+
+That script:
+
+- fetches India holiday pages from CalendarLabs
+- parses the holiday table entries
+- normalizes a few inconsistent labels
+- writes the final holiday map into `src/data/holidayData.js`
+
+By default, the sync script is configured for the year range `2025` through `2035`. If you want to change that range, update the constants in `scripts/syncIndiaHolidayData.mjs` and run the sync command again.
+
+## Deployment
+
+The project is configured for Firebase Hosting.
+
+Current Firebase project:
+
+- `calendarforwall`
+
+Deployment flow:
+
+```bash
+npm run build
+npm run firebase:deploy
+```
+
+Important notes:
+
+- Firebase serves files from `dist/`
+- all routes rewrite to `index.html`
+- this setup works well for the single-page app structure used by Vite and React
+
+## Customization Guide
+
+If you want to change the behavior or appearance of the app, these files are the main starting points:
+
+- `src/App.jsx` contains the core state, planner logic, persistence, printing, and page layout
+- `src/components/CalendarGrid.jsx` renders the calendar grid and date cells
+- `src/components/NotesPanel.jsx` handles note and reminder creation and editing
+- `src/utils/calendarUtils.js` contains date helpers and reminder logic
+- `src/data/holidayData.js` contains the generated holiday dataset
+- `src/data/featuredPhotoData.js` contains the monthly photo metadata and image sources
+- `src/index.css` contains the styling for the interface and print layout
+
+## Data and Storage Notes
+
+- User-created notes and reminders are stored only in the current browser
+- there is no backend database or login system
+- data does not automatically sync across devices or browsers
+- clearing browser storage removes saved planner content
+
+## Credits
+
+- Holiday reference data: [CalendarLabs Holidays](https://www.calendarlabs.com/holidays/)
+- Monthly photo sources: [Pexels](https://www.pexels.com/)
